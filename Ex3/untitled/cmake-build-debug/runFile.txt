@@ -1,0 +1,12 @@
+openDataServer 5400 10
+connect 192.168.56.1 5402
+var x = 0
+var y = bind "/controls/flight/rudder"
+if x == 0 {
+	print "hello"
+}
+while x < 10 {
+	print x
+	x = x + 1
+	sleep 1000
+}
