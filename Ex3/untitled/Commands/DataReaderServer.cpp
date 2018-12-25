@@ -88,7 +88,7 @@ void DataReaderServer::runServer() {
     }
 
     //accept the incoming connection
-    cout << "waiting for client" << endl;
+    //cout << "waiting for client" << endl;
     addrlen = sizeof(address);
     //puts("Waiting for connections ...");
     m_client_socket = accept(m_master_socket,
@@ -102,9 +102,10 @@ void DataReaderServer::runServer() {
 
 
     string bufferStr;
-    cout << "client connected" << endl;
+    //cout << "client connected" << endl;
     bool got_error = false;
     while (true) {
+        auto before = std::chrono::high_resolution_clock::now();
         size_t read_size = 0;
         valread = read(m_client_socket, buffer, BUFFER_SIZE);
         if (0 == valread) {
@@ -155,13 +156,17 @@ void DataReaderServer::runServer() {
                 ToolBox::getSymbolTable().updateSymbolTable(symbolsXml);
             } catch (...) {
                 pthread_mutex_unlock(&(ToolBox::getMutex()));
-                cout << "Got exception while updating symbol table" << endl;
+                //cout << "Got exception while updating symbol table" << endl;
             }
         }
-        double sleepTime = (1 / (double)m_hz) * 1000;
-        usleep((unsigned int) sleepTime * 1000);
+        double sleepTime = (1 / (double)m_hz) * 1000000;
+        auto timePassed = std::chrono::duration_cast<std::chrono::microseconds>
+                (std::chrono::high_resolution_clock::now().time_since_epoch()).count();
+        if (sleepTime > timePassed) {
+            usleep((unsigned int) sleepTime - timePassed);
+        }
     }
-    cout << "Client stopped" << endl;
+    //cout << "Client stopped" << endl;
 
     if (got_error) {
         // TODO handle error

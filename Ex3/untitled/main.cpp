@@ -27,6 +27,9 @@ int main(int args, char* argv[]) {
             string line;
             while (getline(*infile, line))
             {
+                if (line == "exit") {
+                    break;
+                }
                 list<string> elements = Interpreter::getLexer().lexer(line);
                 Interpreter::getParser().parser(elements);
             }
@@ -36,8 +39,15 @@ int main(int args, char* argv[]) {
                 throw "Error closing the file " + string(argv[1]);
             }
             delete infile;
-        } else { //TODO CMD
-            throw "Not enough arguments";
+        } else {
+            Interpreter::initialize();
+            string line;
+            getline(cin, line);
+            while (line != "exit") {
+                list<string> elements = Interpreter::getLexer().lexer(line);
+                Interpreter::getParser().parser(elements);
+                getline(cin, line);
+            }
         }
     } catch (char const * str) {
         perror(str);

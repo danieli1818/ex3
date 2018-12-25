@@ -25,6 +25,12 @@ void OpenServerCommand::doCommand(list<string>::iterator& it, list<string> & arg
     try {
         ExpressionManager em;
         double arg1 = em.calculate(it, args);
+        if (it == args.end()) {
+            throw "Not Valid Open Server Command!!!!";
+        }
+        if ((*it) == ",") {
+            it++;
+        }
         double arg2 = em.calculate(it, args);
         if (it != args.end() || arg1 <= 0 || (int)arg1 != arg1 || arg2 <= 0 || (int)arg2 != arg2) {
             throw "";

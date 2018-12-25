@@ -2,6 +2,7 @@
 // Created by daniel on 12/23/18.
 //
 
+#include <iostream>
 #include "WhileCommand.h"
 #include "../Expression/ExpressionManager.h"
 #include "../ConditionParser.h"
@@ -104,6 +105,71 @@ void WhileCommand::doCommand(list<string>::iterator &it, list<string> &args) {
                     }
                 }
             }
+        } else { //reads from user input.
+            string line;
+            getline(cin, line);
+            while (true) {
+                args = Interpreter::getLexer().lexer(line);
+                it = args.begin();
+                if (!brackets) {
+                    while (it != args.end() && it->empty()) {
+                        it++;
+                    }
+                    if (*it == "{") {
+                        brackets = true;
+                        it++;
+                        while (it != args.end() && it->empty()) {
+                            it++;
+                        }
+                        if (it != args.end() && *it != "}") {
+                            throw "While Command Not Valid!!!!";
+                        }
+                        if (it == args.end()) {
+                            continue;
+                        } else {
+                            it++;
+                            while (it != args.end() && it->empty()) {
+                                it++;
+                            }
+                            if (it != args.end()) {
+                                throw "Not Valid While Command!!!!";
+                            }
+                            break;
+                        }
+                    }
+                } else {
+                    list<string>::iterator temp = it;
+                    while (temp != args.end() && numberOfBrackets > 0) {
+                        if (*temp == "{") {
+                            numberOfBrackets++;
+                        } else {
+                            if (*temp == "}") {
+                                numberOfBrackets--;
+                            }
+                        }
+                        temp++;
+                    }
+                    if (temp != args.end()) {
+                        throw "Not Valid While Command!!!!";
+                    }
+                    if (numberOfBrackets <= 0) {
+                        list<string> final;
+                        while (it != args.end() && next(it) != args.end()) {
+                            final.push_back(*it);
+                        }
+                        if (it != args.end()) {
+                            it++;
+                        }
+                        m_commandsStrings.emplace_back(final);
+                        Interpreter::getParser().parser(final);
+                        break;
+                    } else {
+                        m_commandsStrings.emplace_back(args);
+                        Interpreter::getParser().parser(args);
+                    }
+                }
+                getline(cin, line);
+            }
         }
     } else {
         if (Interpreter::getFileStream() != nullptr) { // reads from file.
@@ -163,6 +229,65 @@ void WhileCommand::doCommand(list<string>::iterator &it, list<string> &args) {
                         }
                     }
                 }
+            }
+        } else { //reads from user input.
+            string line;
+            getline(cin, line);
+            while (true) {
+                args = Interpreter::getLexer().lexer(line);
+                it = args.begin();
+                if (!brackets) {
+                    while (it != args.end() && it->empty()) {
+                        it++;
+                    }
+                    if (*it == "{") {
+                        brackets = true;
+                        it++;
+                        while (it != args.end() && it->empty()) {
+                            it++;
+                        }
+                        if (it != args.end() && *it != "}") {
+                            throw "While Command Not Valid!!!!";
+                        }
+                        if (it == args.end()) {
+                            continue;
+                        } else {
+                            it++;
+                            while (it != args.end() && it->empty()) {
+                                it++;
+                            }
+                            if (it != args.end()) {
+                                throw "Not Valid While Command!!!!";
+                            }
+                            break;
+                        }
+                    }
+                } else {
+                    list<string>::iterator temp = it;
+                    while (temp != args.end() && numberOfBrackets > 0) {
+                        if (*temp == "{") {
+                            numberOfBrackets++;
+                        } else {
+                            if (*temp == "}") {
+                                numberOfBrackets--;
+                            }
+                        }
+                        temp++;
+                    }
+                    if (temp != args.end()) {
+                        throw "Not Valid While Command!!!!";
+                    }
+                    if (numberOfBrackets <= 0) {
+                        list<string> final;
+                        while (it != args.end() && next(it) != args.end()) {
+                            final.push_back(*it);
+                        }
+                        if (it != args.end()) {
+                            it++;
+                        }
+                    }
+                }
+                getline(cin, line);
             }
         }
         return;

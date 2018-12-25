@@ -17,6 +17,10 @@ void Lexer::addSpaces(string &str) {
             }
             if ((isOperatorOrBrackets(str[i]) && str[i + 1] != '=') || (isOperatorOrBrackets(str[i + 1]) && (str[i] != '=' || str[i + 1] != '='))) {
                 str.insert(i + 1, 1, ' ');
+            } else {
+                if ((str[i] == ',' && str[i + 1] != ' ') || str[i + 1] == ',') {
+                    str.insert(i + 1, 1, ' ');
+                }
             }
         }
     }
